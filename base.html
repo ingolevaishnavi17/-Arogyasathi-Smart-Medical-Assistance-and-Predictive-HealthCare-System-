@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.0/mdb.min.css" rel="stylesheet" />
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Data tables -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+
+  <style>
+    /* Original navbar and notification styles */
+    .notification-drop {
+      font-family: 'Ubuntu', sans-serif;
+      color: #444;
+    }
+
+    .notification-drop .item {
+      padding: 10px;
+      font-size: 18px;
+      position: relative;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .notification-drop .item:hover {
+      cursor: pointer;
+    }
+
+    .notification-drop .item i {
+      margin-left: 10px;
+    }
+
+    .notification-drop .item ul {
+      display: none;
+      position: absolute;
+      top: 100%;
+      background: #fff;
+      left: -200px;
+      right: 0;
+      z-index: 1;
+      border-top: 1px solid #ddd;
+    }
+
+    .notification-drop .item ul li {
+      font-size: 16px;
+      padding: 15px 0 15px 25px;
+    }
+
+    .notification-drop .item ul li:hover {
+      background: #ddd;
+      color: rgba(0, 0, 0, 0.8);
+    }
+
+    @media screen and (min-width: 500px) {
+      .notification-drop {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .notification-drop .item {
+        border: none;
+      }
+    }
+
+    .notification-bell {
+      font-size: 20px;
+    }
+
+    .btn__badge {
+      background: #FF5D5D;
+      color: white;
+      font-size: 12px;
+      position: absolute;
+      top: 0;
+      right: 0px;
+      padding: 3px 10px;
+      border-radius: 50%;
+    }
+
+    .pulse-button {
+      box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+      -webkit-animation: pulse 1.5s infinite;
+    }
+
+    .pulse-button:hover {
+      -webkit-animation: none;
+    }
+
+    @-webkit-keyframes pulse {
+      0% {
+        -moz-transform: scale(0.9);
+        -ms-transform: scale(0.9);
+        -webkit-transform: scale(0.9);
+        transform: scale(0.9);
+      }
+
+      70% {
+        -moz-transform: scale(1);
+        -ms-transform: scale(1);
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        box-shadow: 0 0 0 50px rgba(255, 0, 0, 0);
+      }
+
+      100% {
+        -moz-transform: scale(0.9);
+        -ms-transform: scale(0.9);
+        -webkit-transform: scale(0.9);
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+      }
+    }
+
+    .notification-text {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .notification-text span {
+      float: right;
+    }
+
+    /* Chatbot styles from second template */
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      --dark-bg: #1a1d29;
+      --card-bg: #ffffff;
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --border-radius: 16px;
+      --border-radius-sm: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border-bottom: 1px solid var(--border-color);
+      border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+      padding: 1.5rem;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 1.75rem;
+    }
+
+    .btn-custom {
+      background: var(--primary-gradient);
+      border: none;
+      color: white;
+      border-radius: var(--border-radius-sm);
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-custom:hover {
+      background: var(--secondary-gradient);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-outline-primary {
+      border: 2px solid #667eea;
+      color: #667eea;
+      border-radius: var(--border-radius-sm);
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .btn-outline-primary:hover {
+      background: var(--primary-gradient);
+      border-color: transparent;
+      color: white;
+    }
+
+    .alert {
+      border: none;
+      border-radius: var(--border-radius-sm);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Floating Chatbot Button */
+    .chatbot-float-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      background: var(--primary-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .chatbot-float-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      background: var(--secondary-gradient);
+    }
+
+    .chatbot-float-btn.active {
+      background: #dc3545;
+    }
+
+    .chatbot-float-btn.active i::before {
+      content: "\f00d";
+    }
+
+    /* Chatbot Modal */
+    .chatbot-modal {
+      display: none;
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      width: 400px;
+      height: 500px;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      z-index: 999;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .chatbot-modal.show {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chatbot-header {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .chatbot-header h5 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .chatbot-close {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .chatbot-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .chatbot-body {
+      flex: 1;
+      padding: 0;
+      background: #f8f9fa;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-assistant-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: white;
+    }
+
+    .iframe-loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-secondary);
+    }
+
+    .iframe-loading .spinner-border {
+      width: 2rem;
+      height: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge {
+      border-radius: 20px;
+      padding: 0.5rem 0.875rem;
+      font-weight: 500;
+      font-size: 0.75rem;
+    }
+
+    .bg-success {
+      background: var(--success-gradient) !important;
+    }
+
+    .bg-warning {
+      background: var(--warning-gradient) !important;
+      color: var(--text-primary) !important;
+    }
+
+    .btn-outline-info {
+      margin-left: 540px;
+      margin-top: 50px;
+    }
+
+    /* Mobile Responsive Design */
+    @media (max-width: 768px) {
+      .chatbot-modal {
+        width: calc(100vw - 20px);
+        right: 10px;
+        bottom: 80px;
+        height: 70vh;
+        max-height: 500px;
+      }
+
+      .chatbot-float-btn {
+        right: 15px;
+        bottom: 15px;
+        width: 55px;
+        height: 55px;
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .chatbot-modal {
+        width: calc(100vw - 10px);
+        right: 5px;
+        bottom: 70px;
+        height: 60vh;
+      }
+    }
+  </style>
+
+  {% block title %}
+  <title>Health Prediction</title>
+  {% endblock %}
+
+  {% block extra_css %}
+  {% endblock %}
+</head>
+
+<body>
+  <!-- Floating Chatbot Button -->
+  <button class="chatbot-float-btn" id="chatbotBtn">
+    <i class="fas fa-robot"></i>
+  </button>
+
+  <!-- Chatbot Modal -->
+  <div class="chatbot-modal" id="chatbotModal">
+    <div class="chatbot-header">
+      <h5><i class="fas fa-robot me-2"></i>AI Assistant</h5>
+      <button class="chatbot-close" id="chatbotClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="chatbot-body" id="chatbotBody">
+      <div class="iframe-loading" id="iframeLoading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <small>Loading AI Assistant...</small>
+      </div>
+      <iframe class="ai-assistant-iframe" id="aiAssistantIframe" style="display: none;"></iframe>
+    </div>
+  </div>
+
+  {% block navbar %}
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+      <!-- Toggle button -->
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Navbar brand -->
+        <a class="navbar-brand mt-2 mt-lg-0" href="{% url 'index' %}">
+
+        </a>
+        <!-- Left links -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'services' %}">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'doctors' %}">Doctors</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'about' %}">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'contact-us' %}">Contact Us</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'check_disease' %}">Check Disease</a>
+          </li>
+
+          {% if user.is_authenticated %}
+          {% if user.patientprofile.user %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'patient-dashboard' %}">Dashboard</a>
+          </li>
+          {% endif %}
+
+          {% if user.doctorprofile.user %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'doctor-dashboard' %}">Dashboard</a>
+          </li>
+          {% endif %}
+          {% endif %}
+        </ul>
+        <!-- Left links -->
+      </div>
+      <!-- Collapsible wrapper -->
+
+      <form class="d-flex input-group w-auto" method="GET" action="{% url 'filter-doctor' %}">
+        {% csrf_token %}
+        <input type="search" class="form-control" placeholder="Search Doctor" name="doctor_name" aria-label="Search" />
+        <button class="btn btn-outline-primary" type="submit" data-mdb-ripple-color="dark">
+          Search
+        </button>
+      </form>
+
+      <div class="d-flex align-items-center">
+        {% if user.is_authenticated %}
+        {% if user.patientprofile.user %}
+        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm m-2 px-3 me-2">
+          Logout
+        </a>
+        {% else %}
+        <a href="{% url 'doctor-logout' %}" class="btn btn-link px-3 me-2">
+          Doctor Logout
+        </a>
+        {% endif %}
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-link px-3 me-2">
+          Login
+        </a>
+        <a href="{% url 'doctor-login' %}" class="btn btn-primary me-3">
+          Doctor Login
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Right elements -->
+      <div class="d-flex align-items-center">
+        <!-- Avatar -->
+        {% if user.is_authenticated %}
+        <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuLink"
+          role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+          {% if user.patientprofile.photoPatient %}
+          <img src="/media/{{user.patientprofile.photoPatient}}" class="rounded-circle" height="25" alt=""
+            loading="lazy" />
+          {% else %}
+          {% if user.doctorprofile.photoDoctor %}
+          <img src="/media/{{user.doctorprofile.photoDoctor}}" class="rounded-circle" height="25" alt=""
+            loading="lazy" />
+          {% else %}
+          <img src="https://mdbootstrap.com/img/new/avatars/2.jpg" class="rounded-circle" height="25" alt=""
+            loading="lazy" />
+          {% endif %}
+          {% endif %}
+        </a>
+        {% endif %}
+
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+          {% if user.patientprofile %}
+          <li>
+            <a class="dropdown-item" href="{% url 'my-profile' %}">My profile</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'doctor-dashboard' %}">My Appointments</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'change-password' %}">Change Password</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+          </li>
+          {% endif %}
+          {% if user.doctorprofile %}
+          <li>
+            <a class="dropdown-item" href="{% url 'doctor_profile' %}">My profile</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'doctor-dashboard' %}">Doctor Appointments</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'change-password' %}">Change Password</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'doctor-logout' %}">Logout</a>
+          </li>
+          {% endif %}
+        </ul>
+
+
+      </div>
+      <!-- Right elements -->
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+  {% endblock %}
+
+  <div class="main_div p-4">
+    <!-- Messages -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-lg-start bg-light text-muted">
+    <!-- Section: Social media -->
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+      <!-- Left -->
+      <div class="me-5 d-none d-lg-block">
+        <span>Get connected with us on social networks:</span>
+      </div>
+      <!-- Left -->
+
+      <!-- Right -->
+      <div>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-github"></i>
+        </a>
+      </div>
+      <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+      <div class="container text-center text-md-start mt-5">
+        <!-- Grid row -->
+        <div class="row mt-3">
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+            <!-- Content -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              <i class="fas fa-gem me-3"></i>Aarogya Sathi
+            </h6>
+            <p>
+              Here you can use rows and columns to organize your footer content. Lorem ipsum
+              dolor sit amet, consectetur adipisicing elit.
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              Products
+            </h6>
+            <p>
+              <a href="#!" class="text-reset">Consult</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Predict</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Report</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">ASK ME</a>
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              Useful links
+            </h6>
+            <p>
+              <a href="#!" class="text-reset">Consult</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">Predict</a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset"> Report </a>
+            </p>
+            <p>
+              <a href="#!" class="text-reset">ASK ME </a>
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              Contact
+            </h6>
+            <p><i class="fas fa-home me-3"></i> Amravati, Maharashtra 444605,India</p>
+            <p>
+              <i class="fas fa-envelope me-3"></i>
+              info@aargyasathi.com
+            </p>
+            <p><i class="fas fa-phone me-3"></i> + 91 234 567 88</p>
+            <p><i class="fas fa-print me-3"></i> + 91 234 567 89</p>
+          </div>
+          <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
+      </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+      © 2025-2026 Copyright:
+      <a class="text-reset fw-bold" href="https://mdbootstrap.com/">Aarogyasathi</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
+  <!-- Footer -->
+
+  <!-- MDB -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.0/mdb.min.js"></script>
+  <!-- Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Data tables -->
+  <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('#example').DataTable();
+    });
+
+    $(document).ready(function () {
+      $(".notification-drop .item").on('click', function () {
+        $(this).find('ul').toggle();
+      });
+    });
+
+    // Chatbot functionality
+    const chatbotBtn = document.getElementById('chatbotBtn');
+    const chatbotModal = document.getElementById('chatbotModal');
+    const chatbotClose = document.getElementById('chatbotClose');
+    const aiAssistantIframe = document.getElementById('aiAssistantIframe');
+    const iframeLoading = document.getElementById('iframeLoading');
+    let iframeLoaded = false;
+
+    // Toggle chatbot modal
+    function toggleChatbot() {
+      const isVisible = chatbotModal.classList.contains('show');
+
+      if (isVisible) {
+        closeChatbot();
+      } else {
+        openChatbot();
+      }
+    }
+
+    // Open chatbot modal
+    function openChatbot() {
+      chatbotModal.classList.add('show');
+      chatbotBtn.classList.add('active');
+
+      // Load iframe content only once
+      if (!iframeLoaded) {
+        loadAIAssistant();
+      }
+    }
+
+    // Close chatbot modal
+    function closeChatbot() {
+      chatbotModal.classList.remove('show');
+      chatbotBtn.classList.remove('active');
+    }
+
+    // Load AI Assistant iframe
+    function loadAIAssistant() {
+      const aiAssistantUrl = "{% url 'ai_assistant_chat' %}";
+
+      // Show loading spinner
+      iframeLoading.style.display = 'flex';
+      aiAssistantIframe.style.display = 'none';
+
+      // Set iframe source
+      aiAssistantIframe.src = aiAssistantUrl;
+
+      // Handle iframe load event
+      aiAssistantIframe.onload = function () {
+        iframeLoading.style.display = 'none';
+        aiAssistantIframe.style.display = 'block';
+        iframeLoaded = true;
+      };
+
+      // Handle iframe error
+      aiAssistantIframe.onerror = function () {
+        iframeLoading.innerHTML = `
+                    <i class="fas fa-exclamation-triangle text-warning mb-2" style="font-size: 2rem;"></i>
+                    <small>Failed to load AI Assistant</small>
+                    <button class="btn btn-sm btn-primary mt-2" onclick="loadAIAssistant()">
+                        <i class="fas fa-redo me-1"></i>Retry
+                    </button>
+                `;
+      };
+    }
+
+    // Event listeners
+    chatbotBtn.addEventListener('click', toggleChatbot);
+    chatbotClose.addEventListener('click', closeChatbot);
+
+    // Close chatbot when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!chatbotModal.contains(e.target) && !chatbotBtn.contains(e.target)) {
+        if (chatbotModal.classList.contains('show')) {
+          closeChatbot();
+        }
+      }
+    });
+
+    // Handle escape key to close modal
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && chatbotModal.classList.contains('show')) {
+        closeChatbot();
+      }
+    });
+
+    // CSRF Token setup for AJAX requests
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    $.ajaxSetup({
+      beforeSend: function (xhr, settings) {
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>
